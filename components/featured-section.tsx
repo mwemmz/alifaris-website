@@ -2,10 +2,10 @@ import Link from 'next/link'
 import { ArrowRight, Clock, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CarCard } from '@/components/car-card'
-import { getFeaturedCars } from '@/lib/cars-data'
+import { getFeaturedCars, type Car } from '@/lib/cars-data'
 
-export function FeaturedSection() {
-  const featuredCars = getFeaturedCars()
+export function FeaturedSection({ cars }: { cars: Car[] }) {
+  const featuredCars = getFeaturedCars(cars)
 
   return (
     <section className="border-y border-border/60 bg-background py-12 sm:py-16 overflow-hidden">
@@ -49,7 +49,7 @@ export function FeaturedSection() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 xl:grid-cols-5">
           {featuredCars.map((car, index) => (
             <CarCard key={car.id} car={car} index={index} />
           ))}

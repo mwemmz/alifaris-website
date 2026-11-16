@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { MessageCircle, Menu, X, ChevronDown } from 'lucide-react'
+import { MessageCircle, Menu, X, ChevronDown, ShoppingCart, UserRound } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useCart } from '@/components/spares/cart-provider'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,6 +20,7 @@ const FALLBACK_WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`
 export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const { itemCount } = useCart()
 
   const handleWhatsAppClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
@@ -82,6 +84,13 @@ export function Navigation() {
               </DropdownMenuContent>
             </DropdownMenu>
 
+            <Link
+              href="/spares"
+              className="relative text-sm font-semibold text-foreground/90 transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-orange-500 after:transition-all hover:text-orange-400 hover:after:w-full"
+            >
+              Spares
+            </Link>
+
             <Link 
               href="/about" 
               className="relative text-sm font-semibold text-foreground/90 hover:text-primary transition-all duration-300 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary after:transition-all hover:after:w-full"
@@ -99,6 +108,28 @@ export function Navigation() {
 
           {/* Action Buttons */}
           <div className="flex items-center gap-3">
+            <Link
+              href="/admin"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Admin sign in"
+              title="Admin sign in"
+              className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-foreground transition-colors hover:text-orange-400"
+            >
+              <UserRound className="h-5 w-5" />
+            </Link>
+            <Link
+              href="/cart"
+              aria-label={`Shopping cart, ${itemCount} ${itemCount === 1 ? 'item' : 'items'}`}
+              className="relative flex min-h-11 min-w-11 items-center justify-center rounded-full text-foreground transition-colors hover:text-orange-400"
+            >
+              <ShoppingCart className="h-5 w-5" />
+              {itemCount > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-500 px-1 text-[11px] font-bold text-black" aria-hidden="true">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
             <Button 
               asChild
               className="hidden md:flex items-center gap-2 bg-[#25D366] px-6 font-semibold text-white animate-pulse-glow rounded-full hover:bg-[#128C7E]"
@@ -143,6 +174,32 @@ export function Navigation() {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 All Inventory
+              </Link>
+
+              <Link
+                href="/spares"
+                className="flex min-h-[44px] items-center rounded-lg px-4 py-3.5 text-sm font-semibold text-orange-400 transition-all hover:bg-orange-500/5"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Shop Spares
+              </Link>
+
+              <Link
+                href="/admin"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex min-h-[44px] items-center gap-2 rounded-lg px-4 py-3.5 text-sm font-semibold text-foreground/90 transition-all hover:bg-orange-500/5 hover:text-orange-400"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <UserRound className="h-4 w-4" /> Admin sign in
+              </Link>
+
+              <Link
+                href="/cart"
+                className="flex min-h-[44px] items-center gap-2 rounded-lg px-4 py-3.5 text-sm font-semibold text-foreground/90 transition-all hover:bg-orange-500/5 hover:text-orange-400"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <ShoppingCart className="h-4 w-4" /> Cart {itemCount > 0 && <span className="rounded-full bg-orange-500 px-2 py-0.5 text-xs text-black">{itemCount}</span>}
               </Link>
 
               <div className="pl-4 flex flex-col gap-1 border-l-2 border-primary/30 ml-4 my-2">

@@ -1,29 +1,26 @@
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowLeft, Calendar, Gauge, Fuel, Settings, Palette, Zap, CheckCircle2, ChevronRight } from 'lucide-react'
+import { ArrowLeft, Calendar, Gauge, Fuel, Settings, Palette, Zap, CheckCircle2, ChevronRight, ShoppingBag } from 'lucide-react'
 import { Navigation } from '@/components/navigation'
 import { Footer } from '@/components/footer'
 import InquiryForm from '@/components/inquiry-form'
 import { CarCard } from '@/components/car-card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { getCarById, cars, formatPrice } from '@/lib/cars-data'
+import { formatPrice } from '@/lib/cars-data'
+import { getCar, listCars, listSpares } from '@/lib/catalog-repository'
 import { ScrollToInquiry } from '@/components/scroll-to-inquiry'
 
 interface CarPageProps {
   params: Promise<{ id: string }>
 }
 
-export async function generateStaticParams() {
-  return cars.map((car) => ({
-    id: car.id,
-  }))
-}
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: CarPageProps) {
   const { id } = await params
-  const car = getCarById(id)
+  const car = await getCar(id)
   if (!car) return { title: 'Car Not Found | ALIFARIS Auto' }
   return {
     title: `${car.year} ${car.brand} ${car.name} | ALIFARIS Auto`,
@@ -33,12 +30,18 @@ export async function generateMetadata({ params }: CarPageProps) {
 
 export default async function CarPage({ params }: CarPageProps) {
   const { id } = await params
-  const car = getCarById(id)
+  const [car, cars, allSpares] = await Promise.all([getCar(id), listCars(), listSpares()])
   if (!car) return notFound()
 
   const relatedCars = cars
     .filter((candidate) => candidate.category === car.category && candidate.id !== car.id)
     .slice(0, 3)
+  const compatibleSpares = allSpares.filter((spare) => spare.compatibility.some((fit) =>
+    fit.make.toLowerCase() === car.brand.toLowerCase()
+    && fit.model.toLowerCase() === car.name.toLowerCase()
+    && car.year >= fit.yearFrom
+    && car.year <= fit.yearTo,
+  ))
 
   const allImages = [car.image, ...car.images.filter((image) => image !== car.image)]
   const thumbnails = allImages.slice(0, 3)
@@ -197,6 +200,34 @@ export default async function CarPage({ params }: CarPageProps) {
               </div>
             </div>
 
+            {compatibleSpares.length > 0 && (
+              <section className="rounded-2xl border border-orange-500/30 bg-orange-500/5 p-6 sm:p-8">
+                <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <h2 className="text-2xl font-bold">Spares for this car</h2>
+                    <p className="mt-1 text-sm text-muted-foreground">Sample compatibility only — please verify fitment before ordering.</p>
+                  </div>
+                  <Link href="/spares" className="text-sm font-semibold text-orange-400 hover:underline">Browse all spares</Link>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {compatibleSpares.slice(0, 4).map((spare) => (
+                    <Link key={spare.id} href={`/spares/${spare.id}`} className="flex min-h-[72px] items-center justify-between gap-3 rounded-xl border border-border bg-background/70 p-4 transition hover:border-orange-500/50">
+                      <span>
+                        <span className="block font-semibold">{spare.name}</span>
+                        <span className="text-xs text-muted-foreground">{spare.partNumber}</span>
+                      </span>
+                      <span className="shrink-0 text-sm font-bold text-orange-400">View part <ChevronRight className="inline h-4 w-4" /></span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            <Link href={`/car-checkout/${encodeURIComponent(car.id)}`} className="flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-primary px-6 text-base font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition hover:bg-primary/90">
+              <ShoppingBag className="h-5 w-5" />
+              Request to buy this vehicle
+            </Link>
+
             {/* Enquire button */}
             <ScrollToInquiry carName={car.name} />
 
@@ -247,4 +278,3 @@ export default async function CarPage({ params }: CarPageProps) {
     </main>
   )
 }
-

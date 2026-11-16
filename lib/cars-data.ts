@@ -293,18 +293,18 @@ export function getCarById(id: string): Car | undefined {
   return cars.find(car => car.id === id)
 }
 
-export function getCarsByCategory(category: CarCategory): Car[] {
-  return cars.filter(car => car.category === category)
+export function getCarsByCategory(category: CarCategory, sourceCars: Car[] = cars): Car[] {
+  return sourceCars.filter(car => car.category === category)
 }
 
-export function getFeaturedCars(): Car[] {
-  return cars.slice(0, 6)
+export function getFeaturedCars(sourceCars: Car[] = cars): Car[] {
+  return sourceCars.slice(0, 6)
 }
 
 export function formatPrice(price: number): string {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-ZM', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'ZMW',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(price)
@@ -322,8 +322,8 @@ export interface SearchFilters {
   sortBy?: 'price-asc' | 'price-desc' | 'year-desc' | 'name'
 }
 
-export function searchCars(filters: SearchFilters): Car[] {
-  let result = [...cars]
+export function searchCars(filters: SearchFilters, sourceCars: Car[] = cars): Car[] {
+  let result = [...sourceCars]
 
   if (filters.category) {
     result = result.filter(car => car.category === filters.category)
@@ -382,24 +382,26 @@ export function searchCars(filters: SearchFilters): Car[] {
   return result
 }
 
-export function getUniqueFuelTypes(): string[] {
-  return [...new Set(cars.map(c => c.fuelType))]
+export function getUniqueFuelTypes(sourceCars: Car[] = cars): string[] {
+  return [...new Set(sourceCars.map(c => c.fuelType))]
 }
 
-export function getUniqueTransmissions(): string[] {
-  return [...new Set(cars.map(c => c.transmission))]
+export function getUniqueTransmissions(sourceCars: Car[] = cars): string[] {
+  return [...new Set(sourceCars.map(c => c.transmission))]
 }
 
-export function getPriceRange(): { min: number; max: number } {
+export function getPriceRange(sourceCars: Car[] = cars): { min: number; max: number } {
+  if (sourceCars.length === 0) return { min: 0, max: 1 }
   return {
-    min: Math.min(...cars.map(c => c.price)),
-    max: Math.max(...cars.map(c => c.price)),
+    min: Math.min(...sourceCars.map(c => c.price)),
+    max: Math.max(...sourceCars.map(c => c.price)),
   }
 }
 
-export function getYearRange(): { min: number; max: number } {
+export function getYearRange(sourceCars: Car[] = cars): { min: number; max: number } {
+  if (sourceCars.length === 0) return { min: 0, max: 1 }
   return {
-    min: Math.min(...cars.map(c => c.year)),
-    max: Math.max(...cars.map(c => c.year)),
+    min: Math.min(...sourceCars.map(c => c.year)),
+    max: Math.max(...sourceCars.map(c => c.year)),
   }
 }

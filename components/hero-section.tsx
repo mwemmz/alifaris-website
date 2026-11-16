@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { categories, cars, getPriceRange, getYearRange } from '@/lib/cars-data'
+import { categories, getPriceRange, getYearRange, type Car as CarType } from '@/lib/cars-data'
 
 const quickLinks = [
   'Toyota',
@@ -18,7 +18,7 @@ const quickLinks = [
   'Under $60,000',
 ]
 
-export function HeroSection() {
+export function HeroSection({ cars }: { cars: CarType[] }) {
   const router = useRouter()
   const [query, setQuery] = useState('')
   const [category, setCategory] = useState('')
@@ -26,8 +26,8 @@ export function HeroSection() {
   const [minYear, setMinYear] = useState('')
 
   const brands = Array.from(new Set(cars.map(car => car.brand))).sort()
-  const { min: minPrice, max: topPrice } = getPriceRange()
-  const { min: oldestYear, max: newestYear } = getYearRange()
+  const { min: minPrice, max: topPrice } = getPriceRange(cars)
+  const { min: oldestYear, max: newestYear } = getYearRange(cars)
   const popularCars = quickLinks.map(label => {
     const car =
       label === 'Toyota'

@@ -66,6 +66,16 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/spares" className="inline-flex text-sm text-muted-foreground transition-all hover:text-orange-400 hover:translate-x-1 py-2 min-h-[44px] items-center">
+                  Shop Spares
+                </Link>
+              </li>
+              <li>
+                <Link href="/admin" target="_blank" rel="noopener noreferrer" className="inline-flex text-sm text-muted-foreground transition-all hover:text-orange-400 hover:translate-x-1 py-2 min-h-[44px] items-center">
+                  Admin Login
+                </Link>
+              </li>
+              <li>
                 <Link href="/about" className="inline-flex text-sm text-muted-foreground transition-all hover:text-primary hover:translate-x-1 py-2 min-h-[44px] items-center">
                   About Us
                 </Link>

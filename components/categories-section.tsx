@@ -1,9 +1,7 @@
-'use client'
-
 import Link from 'next/link'
 import Image from 'next/image'
 import { Car, Zap, Truck, Sparkles, CircleDot, Crown, ArrowRight } from 'lucide-react'
-import { categories, getCarsByCategory } from '@/lib/cars-data'
+import { categories, getCarsByCategory, type Car as CarType } from '@/lib/cars-data'
 
 const categoryIcons: Record<string, React.ReactNode>= {
   suv: <Car className="w-7 h-7" />,
@@ -23,7 +21,7 @@ const categoryImages: Record<string, string> = {
   luxury: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/IMG-20260313-WA0162-wwlxk8M12Vra3YuD5AnS5EaAGinc9a.jpg',
 }
 
-export function CategoriesSection() {
+export function CategoriesSection({ cars }: { cars: CarType[] }) {
   return (
     <section className="bg-secondary/30 py-12 sm:py-16">
       <div className="container mx-auto px-3 sm:px-4 relative">
@@ -48,7 +46,7 @@ export function CategoriesSection() {
 
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
           {categories.map((category, index) => {
-            const carCount = getCarsByCategory(category.id).length
+            const carCount = getCarsByCategory(category.id, cars).length
             
             return (
               <Link

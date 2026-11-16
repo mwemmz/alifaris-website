@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { CartProvider } from '@/components/spares/cart-provider'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -21,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="w-full max-w-[100vw] overflow-x-clip">
       <body className="font-sans antialiased w-full max-w-[100vw] overflow-x-clip">
-        {children}
+        <CartProvider>{children}</CartProvider>
       </body>
     </html>
   )

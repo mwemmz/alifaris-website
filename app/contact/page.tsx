@@ -110,7 +110,7 @@ export default function ContactPage() {
                   <div>
                     <h3 className="font-semibold text-foreground mb-1">Email Us</h3>
                     <a 
-                      href="mailto:info@ALIFARIS.com" 
+                      href="mailto:info@ALIFARIS.com"
                       className="text-sm text-muted-foreground hover:text-primary transition-colors"
                     >
                       info@ALIFARIS.com
